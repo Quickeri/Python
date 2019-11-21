@@ -1,4 +1,6 @@
 import model as m
+import controller as c
+import argparse
 
 #Takes a converted maze and pretty prints it
 def pretty_print(maze):
@@ -10,21 +12,53 @@ def pretty_print(maze):
         print (string)
     print("")
 
-def print_time(time):
-    print("Elapsed time: {:.3f}ms".format(time))
+def cli_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--loop", "-l", type=range_type, required=False, default=1)
+    args = parser.parse_args()
+    loop = args.loop
+    return loop
 
-def start_view():
+def range_type(arg):
+    value = int(arg)
+    if(value >= 1 and value <= 1000):
+        return value
+    else:
+        raise argparse.ArgumentTypeError("Please enter a number from 1 to 100")
+
+def show_invalid_input_error(err):
+    print("{}".format(err))
+
+def print_total_time(start, end):
+    print("Total elapsed time: {:.3f}ms".format((end - start) * 1000))
+
+def choose_size():
     print("Please enter a grid size")
+    size = input("")
+    return size
 
-def choose_solution():
-    print("Please choose one of the following algorithms:")
-    print("1. Recursive Algorithm")
+def choose_solution(solutions):
+    print("Please choose one of the following solution algorithms:")
+    #print("1. Recursive Algorithm")
+    for algorithm in solutions:
+        print("{}: {}".format(algorithm, solutions[algorithm]))
+    algorithm = input("")
+    return algorithm
 
-def incorrect_input():
-    print("Please enter a grid size between 3 and 50")
-
-def incorrect_input2():
-    print("Invalid input, please try again")
+def choose_generation():
+    print("Please choose one of the following generation algorithms:")
+    print("1. Depth First Algorithm")
+    algorithm = input("")
+    return algorithm
 
 def print_solution():
     print("Solved in: {} moves".format(len(m.visited)))
+
+def print_result(times, moves, size):
+    #print(times)
+    print("\n")
+    print("Maze: {}x{}".format(size, size))
+    print("Average time: {}ms".format(m.calc_average(times)))        
+    print("Minimum time: {}ms".format(min(times)))
+    print("Maximum time: {}ms".format(max(times)))
+    print("Amount of moves: {}".format(moves[0]))
