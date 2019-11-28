@@ -39,10 +39,15 @@ def DFS(maze, coords=(0,0)):
             DFS(maze, new_coords)
     return maze
 
+def reset_search(grid):
+    visited.clear()
+    for y in range(0, len(grid)):
+        for x in range(0, len(grid[0])):
+            if(grid[x][y] == 3):
+                grid[x][y] = 0
+                
 #List of coordinates visited when solving the maze
 visited = []
-times = []
-moves = []
 def search(grid, x, y):
     if grid[x][y] == 2:
         #print("Found exit at ({}, {})".format(x, y))

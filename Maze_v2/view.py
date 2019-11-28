@@ -51,14 +51,14 @@ def choose_generation():
     algorithm = input("")
     return algorithm
 
-def print_solution():
-    print("Solved in: {} moves".format(len(m.visited)))
-
-def print_result(times, moves, size):
+def print_times(times):
+    print(times)
+    
+def print_result(maze_data, size):
     #print(times)
     print("\n")
     print("Maze: {}x{}".format(size, size))
-    print("Average time: {}ms".format(m.calc_average(times)))        
-    print("Minimum time: {}ms".format(min(times)))
-    print("Maximum time: {}ms".format(max(times)))
-    print("Amount of moves: {}".format(moves[0]))
+    print("Average time: {}ms".format(maze_data[size]["avg_time"]))        
+    print("Minimum time: {}ms".format(maze_data[size]["min_time"]))
+    print("Maximum time: {}ms".format(maze_data[size]["max_time"]))
+    print("Amount of moves: {}".format(maze_data[size]["moves"]))
