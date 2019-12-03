@@ -5,11 +5,12 @@ import sys
 
 sys.setrecursionlimit(10000)
 
-#Returns an empty maze of a given size
+# Returns an empty maze of a given size
 def make_empty_maze(height, width):
     maze = [[[] for b in range(width)] for a in range(height)]
     return maze
 
+# Converts empty maze to ...
 def convert(maze):
     pretty_maze = [[1]*(2*len(maze[0])+1) for a in range(2*len(maze)+1)]
     for y,row in enumerate(maze):
@@ -24,7 +25,7 @@ def convert(maze):
         row.pop(0)
         row.pop(len(row)-1)
     length = len(pretty_maze)-1
-    #Placing the destination
+    #Placing the end destination
     pretty_maze[length][length] = 2
     return pretty_maze
 
@@ -46,8 +47,11 @@ def reset_search(grid):
             if(grid[x][y] == 3):
                 grid[x][y] = 0
                 
-#List of coordinates visited when solving the maze
+# List of coordinates visited when solving the maze
 visited = []
+
+####    ALGORITHMS    ###
+# Recursive backtracker #
 def search(grid, x, y):
     if grid[x][y] == 2:
         #print("Found exit at ({}, {})".format(x, y))
@@ -64,6 +68,53 @@ def search(grid, x, y):
         or (y < len(grid)-1 and search(grid, x, y+1))):
         return True
     return False
+
+# A* Algorithm #
+# g = actual length from start cell to current cell
+# h = estimated length from current cell to end (without walls)
+# f = sum of g and h
+class Cell(object):
+    def __init__(self, x, y, reachable):
+        self.reachable = reachable
+        self.x = x
+        self.y = y
+        self.parent = None
+        self.g = 0
+        self.h = 0
+        self.f = 0
+
+# heapifies the list with the lowest "f" at the top
+# gets the size of the grid
+class AStar(object):
+    def _init_(self, x, y, reachable, height, width):
+        self.opened = []
+        heapq.heapify(self.opened)
+        self.closed = set()
+        self.cells = []
+        self.grid_height = height
+        self.grid_width = width
+
+# Calculates distance from current to end
+def get_h_value(self, cell)
+return 10 * (abs(cell.x - cell.end.x) + abs(cell.y - cell.end.y))
+
+# Initializes the grid  - gets start and end coordinate
+# Checks where there's walls
+def init_grid(grid, x , y):
+    for x in range(self.grid_width):
+        for y in range(self.grid_height):
+            if grid[x][y] = 2
+                reachable = False
+            else:
+                reachable = True
+            self. cells.append(Cell (x, y, reachable))
+    self.start = self.get_cell(0, 0)
+    # For Testing:
+    # self.end = self.get_cell(9, 9)
+    self.end = self.get_cell(self.grid_height, self.grid_width)
+            
+
+################################################################################
 
 def save_maze(filename, maze):
     with open(filename, "w", newline='') as f:
@@ -107,14 +158,26 @@ def load_maze_data2(filename):
             maze_data[row[0]] = {'moves': row[1], 'avg_time': row[2], 'min_time': row[3], 'max_time': row[4]}
     return maze_data
 
+# Choose an algorithm to use
+
+# # Choose an algorithm to use
+# def available_algorithms(choice):
+#     solutions = [ {"1": "Recursive"}, {"2": "A*"} ]
+#     #solutions = {"1": {"name": "Recursive", "algorithm": search}}
+#     if choice not in solutions.keys():
+#         raise exc.InvalidInputException("Invalid input - Please try again")
+#     else:
+#         return solutions[choice-1]
+
 def available_algorithms(choice):
-    solutions = {"1": "Recursive"}
+    solutions = {"1": "Recursive", "2": "a*"}
     #solutions = {"1": {"name": "Recursive", "algorithm": search}}
     if choice not in solutions.keys():
         raise exc.InvalidInputException("Invalid input - Please try again")
     else:
         return solutions[choice]
 
+# Returns chosen algorithm to be used
 def get_solutions():
     solutions = {"1": "Recursive"}
     return solutions
