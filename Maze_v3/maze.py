@@ -1,13 +1,14 @@
 import csv
 
 class Maze:
-    def __init__(self, height, width):
+    def __init__(self, height, width, grid):
         self.height = height
         self.width = width
+        self.grid = grid #use list.copy() to create new list instead of a reference? Search() will modify the list
         self.generation_times = [] #use dictionary instead (algorithm as key, list of times as value)
         self.solution_times = []
         self.moves = []
-        self.grid = [] #use list.copy() to create new list instead of a reference? Search() will modify the list
+        self.count = 0
 
     def pretty_print(self):
         for a in self.grid:

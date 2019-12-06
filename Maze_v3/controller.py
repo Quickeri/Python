@@ -15,7 +15,7 @@ class Controller:
         self.root.minsize(height = 600, width = 1000)
         self.root.mainloop()
 
-    #Generates a single maze with a given size and generation algorithm(String) - displays a messagebox in view
+    # Generates a single maze with a given size and generation algorithm(String) - displays a messagebox in view
     def generate_single_maze(self, generation_alg, size, repetitions):
         try:
             self.model.generate_single_maze(generation_alg, size)
@@ -23,16 +23,19 @@ class Controller:
         except exc.InvalidInputException as e:
             self.view.show_messagebox("Error", e)
     
-    #Solves a single maze from a given csv file - displays a messagebox in view
+    # Solves a single maze from a given csv file - displays a messagebox in view
     def solve_single_maze(self, solution_alg, filename, repetitions):
         try:
-            size, moves, times = self.model.solve_single_maze(solution_alg, filename)
-            self.view.show_messagebox("Success", "Solved the {}x{} maze in {}ms, and {} moves".format(size, size, times, moves))
+            maze = self.model.solve_single_maze(solution_alg, filename, repetitions)
+            self.view.show_messagebox("Success", "Solved the {}x{} maze with {} repetition(s): \n{}ms minimum \n{}ms maximum \n{}ms average".format(maze.height, maze.width, repetitions, min(maze.solution_times), max(maze.solution_times), self.model.calc_average(maze.solution_times)))
         except exc.InvalidInputException as e:
             self.view.show_messagebox("Error", e)
 
     def generate_multiple_mazes(self, generation_alg):
-        pass
+        try:
+            pass
+        except exc.InvalidInputException as e:
+            self.view.show_messagebox("Error", e)
     
     def solve_multiple_mazes(self, solution_algorithm, filename, repetitions):
         try:

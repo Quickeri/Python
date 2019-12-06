@@ -7,7 +7,10 @@ import matplotlib.pyplot as plt
 class View:
     def __init__(self, root, controller):
         self.root = root
-        #self.frame = Frame(root)
+        self.frame = Frame(root)
+        self.frame.pack()
+        #self.solve_frame = Frame(self.root)
+        #self.solve_frame.pack(side=RIGHT)
         self.controller = controller
         self.min_size = StringVar()
         self.max_size = StringVar() 
@@ -32,57 +35,58 @@ class View:
         self.maze_file_name.set(filename)
         self.file_path_label.config(text = filename)
 
+    def load_solve_frame(self):
+        solve_frame = Frame(self.root)
+        solve_frame.pack(side=RIGHT)
+
     def load_view(self):  
-        L1 = Label(self.root, text="Minimum maze size")
-        L1.pack()
-        min_size_input = Entry(self.root, textvariable = self.min_size, font=("Calibri 12")) #Input field
-        min_size_input.pack(pady=5)
-        min_size_input.insert(0, "5")
+        # L1 = Label(self.root, text="Minimum maze size")
+        # L1.pack()
+        # min_size_input = Entry(self.root, textvariable = self.min_size, font=("Calibri 12")) #Input field
+        # min_size_input.pack(pady=5)
+        # min_size_input.insert(0, "5")
 
-        L2 = Label(self.root, text="Maximum maze size")
-        L2.pack()
-        max_size_input = Entry(self.root, textvariable = self.max_size, font=("Calibri 12"))
-        max_size_input.pack(pady=5)
-        max_size_input.insert(0, "50")
+        # L2 = Label(self.root, text="Maximum maze size")
+        # L2.pack()
+        # max_size_input = Entry(self.root, textvariable = self.max_size, font=("Calibri 12"))
+        # max_size_input.pack(pady=5)
+        # max_size_input.insert(0, "50")
 
-        L3 = Label(self.root, text="Repetitions")
-        L3.pack()
-        repetitions_input = Entry(self.root, textvariable = self.repetitions, font=("Calibri 12"))
+        repetitions_label = Label(self.frame, text="Repetitions")
+        repetitions_label.pack()
+        repetitions_input = Entry(self.frame, textvariable = self.repetitions, font=("Calibri 12"))
         repetitions_input.pack(pady=5)
         repetitions_input.insert(0, "10")
 
-        C1 = Checkbutton(self.root, text = "Save data to file", variable = self.save_data, onvalue = True, offvalue = False)
-        C1.pack(pady=5)
+        maze_size_label = Label(self.frame, text="Maze size")
+        maze_size_label.pack()
+        maze_size_input = Entry(self.frame, textvariable = self.single_maze_size, font=("Calibri 12")) #Input field
+        maze_size_input.pack(pady=5)
+        maze_size_input.insert(0, "10")
 
-        L4 = Label(self.root, text="Solution algorithm")
-        L4.pack()
-        sol_algorithm = OptionMenu(self.root, self.sol, *self.controller.get_sol_algorithms())
+        select_maze_button = Button(self.frame, text = "Select maze file", command = self.select_file)
+        select_maze_button.pack(pady=5)
+        self.file_path_label = Label(self.frame)
+        self.file_path_label.pack()
+
+        save_file_checkbutton = Checkbutton(self.frame, text = "Save data to file", variable = self.save_data, onvalue = True, offvalue = False)
+        save_file_checkbutton.pack(pady=5)
+
+        sol_algorithm_label = Label(self.frame, text="Solution")
+        sol_algorithm_label.pack()
+        sol_algorithm = OptionMenu(self.frame, self.sol, *self.controller.get_sol_algorithms())
         sol_algorithm.pack(pady=5)
 
-        L5 = Label(self.root, text="Generation algorithm")
-        L5.pack()
-        gen_algorithm = OptionMenu(self.root, self.gen, *self.controller.get_gen_algorithms())
-        gen_algorithm.pack(pady=5)
-
-        start_button = Button(self.root, text = "Start Program", command = self.get_values)
-        start_button.pack(pady=5)
-
-        L6 = Label(self.root, text="Maze size")
-        L6.pack()
-        min_size_input = Entry(self.root, textvariable = self.single_maze_size, font=("Calibri 12")) #Input field
-        min_size_input.pack(pady=5)
-        min_size_input.insert(0, "10")
-
-        create_maze_button = Button(self.root, text = "Create single maze", command = lambda: self.controller.generate_single_maze(self.gen.get(), self.single_maze_size.get(), self.repetitions.get()))
-        create_maze_button.pack(pady=5)
-
-        solve_maze_button = Button(self.root, text = "Solve single maze", command = lambda: self.controller.solve_single_maze(self.sol.get(), self.maze_file_name.get(), self.repetitions.get()))
+        solve_maze_button = Button(self.frame, text = "Solve single maze", command = lambda: self.controller.solve_single_maze(self.sol.get(), self.maze_file_name.get(), self.repetitions.get()))
         solve_maze_button.pack(pady=5)
 
-        select_maze_button = Button(self.root, text = "Select maze file", command = self.select_file)
-        select_maze_button.pack(pady=5)
-        self.file_path_label = Label(self.root)
-        self.file_path_label.pack()
+        gen_algorithm_label = Label(self.frame, text="Generation")
+        gen_algorithm_label.pack()
+        gen_algorithm = OptionMenu(self.frame, self.gen, *self.controller.get_gen_algorithms())
+        gen_algorithm.pack(pady=5)
+        
+        create_maze_button = Button(self.frame, text = "Create single maze", command = lambda: self.controller.generate_single_maze(self.gen.get(), self.single_maze_size.get(), self.repetitions.get()))
+        create_maze_button.pack(pady=5)
 
     def show_graphs(self, keys, avg_time, moves):
         plt.figure(1)
@@ -103,4 +107,6 @@ class View:
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
 
-    
+#class SideFrame():
+#    def __init__(self, root):
+ #       side_frame = Frame(root)
