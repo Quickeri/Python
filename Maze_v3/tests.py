@@ -41,7 +41,8 @@ class TestModelMethods(unittest.TestCase):
         pass
 
     def test_generate_multiple_mazes(self):
-        pass
+        result = self.model.generate_and_solve_multiple("10", False)
+        self.assertEqual(6, len(result))
     
 if __name__ == '__main__':
     unittest.main()

@@ -45,8 +45,27 @@ class Controller:
         except exc.InvalidInputException as e:
             self.view.show_messagebox("Error", e)
 
-    def generate_with_all_algorithms(self):
-        pass
+    def generate_and_solve_multiple(self, repetitions, save):
+        try:
+            mazes = self.model.generate_and_solve_multiple(repetitions, save)
+            maze_sizes = []
+            avg_solution_times = []
+            avg_generation_times = []
+            for maze in mazes:
+                maze_sizes.append(maze.height)
+                avg_solution_times.append(self.model.calc_average(maze.solution_times))
+                avg_generation_times.append(self.model.calc_average(maze.generation_times))
+
+            title = "Relationship between the maze size and average solution time"
+            self.view.setup_plot(1, title, "", "Maze Size", "Time (ms)")
+            self.view.plot_graph(maze_sizes, avg_solution_times)
+            
+            title2 = "Relationship between the maze size and average generation time"
+            self.view.setup_plot(2, title2, "", "Maze Size", "Time (ms)")
+            self.view.plot_graph(maze_sizes, avg_generation_times)
+            self.view.show_graph()
+        except exc.InvalidInputException as e:
+            self.view.show_messagebox("Error", e)
     
     def solve_with_all_algorithms(self):
         pass

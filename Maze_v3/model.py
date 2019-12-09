@@ -158,7 +158,7 @@ class Model:
                     temp_grid.append(row)
                 else:
                     temp_grid = [list(map(int, el)) for el in temp_grid]
-                    grid = temp_grid.copy()
+                    grid = [row[:] for row in temp_grid]
                     m = Maze(len(grid), len(grid[0]), grid)
                     mazes.append(m)
                     temp_grid.clear()
@@ -219,54 +219,72 @@ class Model:
             or (y < len(grid)-1 and self.search(grid, count, x, y+1))):
             return True
         return False 
+    
+    def generate_and_solve_multiple(self, repetitions, save):
+        if(self.validate_input_range(repetitions, self.MIN_REPETITIONS, self.MAX_REPETITIONS)):
+            sol_list = [self.search]
+            gen_list = [self.depth_first_generation]
+            p = ProducerThread(self.queue, gen_list)
+            c = ConsumerThread(self.queue, repetitions, sol_list)
+            p.start()
+            c.start()
+            p.join()
+            c.join()
+            if(save == True):
+                grids = []
+                for maze in p.maze_list:
+                    grids.append(maze.grid)
+                self.save_multiple_mazes("producerconsumer.csv", grids)
+            return p.maze_list
+        else:
+            raise exc.InvalidInputException("Repetitions must be a number between {} and {}".format(self.MIN_REPETITIONS, self.MAX_REPETITIONS))
 
 class ProducerThread(Thread):
-    def __init__(self, queue, repetitions, generation_alg, size):
+    def __init__(self, queue, generation_alg, save=True):
         self.queue = queue
-        self.repetitions = repetitions
-        self.generation_alg = generation_alg
-        self.size = size
-
-    def run(self):
-        #for size in range(5, 35, 5):
-            for i in range(self.repetitions):
-                if not self.queue.full():
-                    start = time.perf_counter()
-                    grid = self.generation_alg(self.size, self.size)
-                    end = time.perf_counter()
-                    elapsed = (end - start) * 1000.0
-                    maze = Maze(self.size, self.size, grid)
-                    maze.solution_times.append(elapsed)
-                    self.queue.put(maze)
-                    print("Generation time: {}ms".format(elapsed))    
-    
-class ConsumerThread(Thread):
-    def __init__(self, queue, repetitions, solution_alg, save=True, solve=True):
-        self.queue = queue
-        self.repetitions = repetitions
-        self.solution_alg = solution_alg
+        self.maze_list = []
+        self.generation_alg = generation_alg 
         self.save = save
-        self.solve = solve
+        super(ProducerThread, self).__init__()
 
     def run(self):
-        while True:
-            if not self.queue.empty():
-                maze = self.queue.get()
+        for size in range(5, 35, 5):
+            for alg in self.generation_alg:
                 start = time.perf_counter()
-                self.solution_alg(maze) 
+                grid = alg(size, size)
                 end = time.perf_counter()
                 elapsed = (end - start) * 1000.0
+                maze = Maze(size, size, grid)
                 maze.generation_times.append(elapsed)
-                self.queue.task_done()
-                print("Solution time: {}ms".format(elapsed))
+                self.maze_list.append(maze)
+                self.queue.put(maze)
+                print("Generation time: {}ms".format(elapsed))
+        self.queue.put([])    
+    
+class ConsumerThread(Thread):
+    def __init__(self, queue, repetitions, solution_alg, save=True):
+        self.queue = queue
+        self.repetitions = int(repetitions)
+        self.solution_alg = solution_alg
+        self.save = save
+        self.running = True
+        super(ConsumerThread, self).__init__()
 
-# class ProducerThread(Thread):
-#     def run(self):
-#         while True:
-#             if not queue.full():
-#                 start = time.perf_counter()
-#                 converted_maze = convert(DFS(make_empty_maze(50, 50)))
-#                 end = time.perf_counter()
-#                 elapsed = (end - start) * 1000.0
-#                 queue.put(converted_maze)
-#                 print("Generation time: {}ms".format(elapsed))
+    def run(self):
+        while self.running:
+            maze = self.queue.get()
+            if maze:
+                for alg in self.solution_alg:
+                    for i in range(self.repetitions):
+                        start = time.perf_counter()
+                        grid = [row[:] for row in maze.grid] # Copy all elements in list by value instead of reference
+                        alg(grid) 
+                        end = time.perf_counter()
+                        elapsed = (end - start) * 1000.0
+                        maze.solution_times.append(elapsed)
+                        print("Solution time: {}ms".format(elapsed))
+                    print("\n")
+                    self.queue.task_done()
+            else:
+                print(self.queue.empty())
+                self.running = False

@@ -88,25 +88,17 @@ class View:
         create_maze_button = Button(self.frame, text = "Create single maze", command = lambda: self.controller.generate_single_maze(self.gen.get(), self.single_maze_size.get(), self.repetitions.get()))
         create_maze_button.pack(pady=5)
 
-    def show_graphs(self, keys, avg_time, moves):
-        plt.figure(1)
-        title = "Relationship between the maze size and average solution time"
-        self.setup_plot(title, "", "Maze Size", "Time (ms)")
-        plt.plot(keys, avg_time)
-        plt.legend()
+        create_and_solve_button = Button(self.frame, text = "Create and solve", command = lambda: self.controller.generate_and_solve_multiple(self.repetitions.get(), self.save_data.get()))
+        create_and_solve_button.pack(pady=5)
 
-        plt.figure(2)
-        title = "Relationship between the maze size and amount of moves"
-        self.setup_plot(title, "", "Maze Size", "Moves")
-        plt.plot(keys, moves)
-        plt.legend()
-        plt.show()  
-    
-    def setup_plot(self, title, title2, xlabel, ylabel):
+    def show_graph(self):
+        plt.show()
+
+    def plot_graph(self, x, y):
+        plt.plot(x, y)
+
+    def setup_plot(self, fig_nr, title, title2, xlabel, ylabel):
+        plt.figure(fig_nr)
         plt.title("{}\n{}".format(title, title2))
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
-
-#class SideFrame():
-#    def __init__(self, root):
- #       side_frame = Frame(root)
