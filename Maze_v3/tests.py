@@ -1,4 +1,4 @@
-from model import Model, Maze
+from model import Model, Maze, ProducerThread, ConsumerThread
 import unittest
 
 class TestModelMethods(unittest.TestCase):

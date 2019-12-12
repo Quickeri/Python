@@ -47,7 +47,7 @@ class Model:
             self.save_maze("maze.csv", maze)
             return maze
         else:
-            raise exc.InvalidInputException("Invalid input - maze size must be a number between 4 and 50")
+            raise exc.InvalidInputException("Invalid input - maze size must be a number between {} and {}".format(self.MIN_SIZE, self.MAX_SIZE))
     
     def generate_multiple_mazes(self, genneration_algorithm):
         pass
@@ -224,7 +224,7 @@ class Model:
         if(self.validate_input_range(repetitions, self.MIN_REPETITIONS, self.MAX_REPETITIONS)):
             sol_list = [self.search]
             gen_list = [self.depth_first_generation]
-            p = ProducerThread(self.queue, gen_list)
+            p = ProducerThread(self.queue, repetitions, gen_list)
             c = ConsumerThread(self.queue, repetitions, sol_list)
             p.start()
             c.start()
@@ -240,8 +240,9 @@ class Model:
             raise exc.InvalidInputException("Repetitions must be a number between {} and {}".format(self.MIN_REPETITIONS, self.MAX_REPETITIONS))
 
 class ProducerThread(Thread):
-    def __init__(self, queue, generation_alg, save=True):
+    def __init__(self, queue, repetitions, generation_alg, save=True):
         self.queue = queue
+        self.repetitions = int(repetitions)
         self.maze_list = []
         self.generation_alg = generation_alg 
         self.save = save
@@ -250,16 +251,18 @@ class ProducerThread(Thread):
     def run(self):
         for size in range(5, 35, 5):
             for alg in self.generation_alg:
-                start = time.perf_counter()
-                grid = alg(size, size)
-                end = time.perf_counter()
-                elapsed = (end - start) * 1000.0
-                maze = Maze(size, size, grid)
-                maze.generation_times.append(elapsed)
+                maze = Maze(size, size)
+                for i in range(self.repetitions):
+                    start = time.perf_counter()
+                    grid = alg(size, size)
+                    end = time.perf_counter()
+                    elapsed = (end - start) * 1000.0
+                    maze.grid = grid
+                    maze.generation_times.append(elapsed)
+                    print("Generation time: {}ms".format(elapsed))
                 self.maze_list.append(maze)
                 self.queue.put(maze)
-                print("Generation time: {}ms".format(elapsed))
-        self.queue.put([])    
+        self.queue.put([]) # Stops the consumer from running   
     
 class ConsumerThread(Thread):
     def __init__(self, queue, repetitions, solution_alg, save=True):
@@ -286,5 +289,4 @@ class ConsumerThread(Thread):
                     print("\n")
                     self.queue.task_done()
             else:
-                print(self.queue.empty())
                 self.running = False

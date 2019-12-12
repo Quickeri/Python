@@ -1,7 +1,7 @@
 import csv
 
 class Maze:
-    def __init__(self, height, width, grid):
+    def __init__(self, height, width, grid=[]):
         self.height = height
         self.width = width
         self.grid = grid #use list.copy() to create new list instead of a reference? Search() will modify the list
@@ -33,3 +33,7 @@ class Maze:
             for row in reader:
                 maze_data[row[0]] = {'moves': row[1], 'avg_time': row[2], 'min_time': row[3], 'max_time': row[4]}
         return maze_data
+    
+    # Copy all elements in list by value instead of reference
+    def copy_maze(self):
+        return [x[:] for x in self.grid]
