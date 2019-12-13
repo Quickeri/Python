@@ -222,96 +222,95 @@ class Model:
             return True
         return False 
 
-    # A* Algorithm #
-    # g = actual length from start cell to current cell
-    # h = estimated length from current cell to end (without walls)
-    # f = sum of g and h
-    class cell(object):
-        def __init__(self, x, y, reachable):
-            self.reachable
-            self.x = x
-            self.y = y
-            self.parent = None
-            self.g = 0
-            self.h = 0
-            self.f = 0
+    # # A* Algorithm #
+    # # g = actual length from start cell to current cell
+    # # h = estimated length from current cell to end (without walls)
+    # # f = sum of g and h
+    # class cell(object):
+    #     def __init__(self, x, y, reachable):
+    #         self.reachable
+    #         self.x = x
+    #         self.y = y
+    #         self.parent = None
+    #         self.g = 0
+    #         self.h = 0
+    #         self.f = 0
 
-    # Heapyfies the list with the lowest "f" at the top
-    # gets the size of the grid
-    Class AStar(object):
-        def __init__(self, x, y, reachable, height, width)
-            self.opened = []
-            heapq.heapify(self.opened)
-            self.closed = set()
-            self.cells = []
-            self.grid_height = height
-            self.grid_width = width
+    # # Heapyfies the list with the lowest "f" at the top
+    # # gets the size of the grid
+    # class AStar(object):
+    #     def __init__(self, x, y, reachable, height, width):
+    #         self.opened = []
+    #         heapq.heapify(self.opened)
+    #         self.closed = set()
+    #         self.cells = []
+    #         self.grid_height = height
+    #         self.grid_width = width
 
-    # Calculates distance from current to end
-    def get_h_value(self, cell)
-    return 10 * (abs(cell.x - cell.end.x) + abs(cell.y - cell.end.y))
+    # # Calculates distance from current to end
+    # def get_h_value(self, cell):
+    #     return 10 * (abs(cell.x - cell.end.x) + abs(cell.y - cell.end.y))
 
-    # Initializes the grid - gets start and end coordinate
-    # Checks where there's walls
-    def init_grid(grid, x, y):
-        for x in range(self.grid_width):
-            for y in range(self.grid_height):
-                if grid[x][y] = 2
-                    reachable = False
-                else:
-                    reachable = True
-                self.cells.append(Cell (x, y, reachable))
-        self.start = self.get_cell(0,0)
-        # For Testing:
-        # self.end = self.get_cell(9,9)
-        self.end = self.get_cell(self.grid_height, self.grid_width)
+    # # Initializes the grid - gets start and end coordinate
+    # # Checks where there's walls
+    # def init_grid(grid, x, y):
+    #     for x in range(self.grid_width):
+    #         for y in range(self.grid_height):
+    #             if grid[x][y] == 2:
+    #                 reachable = False
+    #             else:
+    #                 reachable = True
+    #             self.cells.append(Cell (x, y, reachable))
+    #     self.start = self.get_cell(0,0)
+    #     # For Testing:
+    #     # self.end = self.get_cell(9,9)
+    #     self.end = self.get_cell(self.grid_height, self.grid_width)
 
-    # Returns particular cell with given coordinates
-    def get_cell(self, x, y):
-        return self.cells[x * self.grid_height + y]
+    # # Returns particular cell with given coordinates
+    # def get_cell(self, x, y):
+    #     return self.cells[x * self.grid_height + y]
 
-    # Retrieve Adjacent cells to specific cell
-    def get_adjacent_cells(self, cell)
-    
-        cells = []
-        if cell.x < self.grid_width-1:
-            cells.append(self.get_cell(cell.x+1, cell.y))
-        if cell.y > 0:
-            cells.append(self.get_cell(cell.x, cell.y-1))
-        if cell.x > 0:
-            cells.append(self.get_cell.x-1, cell.y)                                                                                                     
-        if cell.y < self.grid_height-1:
-            cells.append(self.get_cell(cell.x, cell.y+1))
-        return cells                    
+    # # Retrieve Adjacent cells to specific cell
+    # def get_adjacent_cells(self, cell):
+    #     cells = []
+    #     if cell.x < self.grid_width-1:
+    #         cells.append(self.get_cell(cell.x+1, cell.y))
+    #     if cell.y > 0:
+    #         cells.append(self.get_cell(cell.x, cell.y-1))
+    #     if cell.x > 0:
+    #         cells.append(self.get_cell.x-1, cell.y)                                                                                                     
+    #     if cell.y < self.grid_height-1:
+    #         cells.append(self.get_cell(cell.x, cell.y+1))
+    #     return cells                    
 
-    # Calculates G and H values and sets the parent cell
-    def update_cell(self, adj, cell):
-        adj.g = cell.g + 10
-        adj.h = self.get_h_value(adj)
-        adj.parent = cell
-        adj.f = adj.h + adj.g
+    # # Calculates G and H values and sets the parent cell
+    # def update_cell(self, adj, cell):
+    #     adj.g = cell.g + 10
+    #     adj.h = self.get_h_value(adj)
+    #     adj.parent = cell
+    #     adj.f = adj.h + adj.g
 
-    #
-    def process(self):
-        # Adds starting cell to open heap queue
-        heapq.heappush(self.opened, (self.start.f, self.start))
-        while len(self.opened):
-            #
-            f, cell = heapq.heappop(self.opened)
-            #
-            self.closed.add(cell)
-            # If its ending cell "TO_DO" 
-            if cell is self.end:
-                # TO_DO
-                break
-            adj_cells = self.get_adjacent_cells(cell)
-            for adj_cell in adj_cells:
-                if (adj_cell.f, adj_cell) in self.opened
-                    if adj_cell.g > cell.g + 10:
-                        self.update_cell(adj_cell, cell)
-                else:
-                    self.update_cell(adj_cell, cell)
-                    heapq.heappush(self.opened, (adj_cell.f, adj_cell))
+    #     #
+    #     def process(self):
+    #         # Adds starting cell to open heap queue
+    #         heapq.heappush(self.opened, (self.start.f, self.start))
+    #         while len(self.opened):
+    #             #
+    #             f, cell = heapq.heappop(self.opened)
+    #             #
+    #             self.closed.add(cell)
+    #             # If its ending cell "TO_DO" 
+    #             if cell is self.end:
+    #                 # TO_DO
+    #                 break
+    #             adj_cells = self.get_adjacent_cells(cell)
+    #             for adj_cell in adj_cells:
+    #                 if ((adj_cell.f, adj_cell) in self.opened):
+    #                     if adj_cell.g > cell.g + 10:
+    #                         self.update_cell(adj_cell, cell)
+    #                 else:
+    #                     self.update_cell(adj_cell, cell)
+    #                     heapq.heappush(self.opened, (adj_cell.f, adj_cell))
                 
 
     ### Algorithms end ###
