@@ -164,6 +164,32 @@ class Model:
                     temp_grid.clear()
         return mazes
 
+    # Saves to csv with no headers or field names
+    def save_maze_data(self, filename, maze_list):
+        with open(filename, "w", newline='') as f:
+            writer = csv.writer(f)
+            for maze in maze_list:
+                writer.writerow([maze.height, "24", self.calc_average(maze.generation_times), self.calc_average(maze.solution_times)])
+    
+    # Loads the maze data from csv 
+    def load_maze_data(self, filename):
+        if(self.validate_csv_file(filename)):
+            mazes = []
+            try:
+                with open(filename, "r") as f:
+                    reader = csv.reader(f, delimiter=(','))
+                    for row in reader:
+                        maze = Maze(int(row[0]), int(row[0]))
+                        maze.moves.append(int(row[1]))
+                        maze.generation_times.append(float(row[2]))
+                        maze.solution_times.append(float(row[3]))
+                        mazes.append(maze)
+                return mazes
+            except:
+                raise exc.InvalidInputException("Unable to read the file - maze data format")
+        else:
+            raise exc.InvalidInputException("Unable to read the file - wrong extention type")
+
     # Generates and returns a maze with the given height and width, using the depth first algorithm
     def depth_first_generation(self, height, width):
         converted_maze = self.convert(self.DFS(self.make_empty_maze(height, width)))
@@ -328,6 +354,7 @@ class Model:
                 grids = []
                 for maze in p.maze_list:
                     grids.append(maze.grid)
+                self.save_maze_data("maze_data.csv", p.maze_list)
                 self.save_multiple_mazes("producerconsumer.csv", grids)
             return p.maze_list
         else:
@@ -353,7 +380,7 @@ class ProducerThread(Thread):
                     elapsed = (end - start) * 1000.0
                     maze.grid = grid
                     maze.generation_times.append(elapsed)
-                    print("Generation time: {}ms".format(elapsed))
+                    #print("Generation time: {}ms".format(elapsed))
                 self.maze_list.append(maze)
                 self.queue.put(maze)
         self.queue.put([]) # Stops the consumer from running   
@@ -379,8 +406,8 @@ class ConsumerThread(Thread):
                         end = time.perf_counter()
                         elapsed = (end - start) * 1000.0
                         maze.solution_times.append(elapsed)
-                        print("Solution time: {}ms".format(elapsed))
-                    print("\n")
+                        #print("Solution time: {}ms".format(elapsed))
+                    #print("\n")
                     self.queue.task_done()
             else:
                 self.running = False

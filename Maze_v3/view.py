@@ -91,6 +91,9 @@ class View:
         create_and_solve_button = Button(self.frame, text = "Create and solve", command = lambda: self.controller.generate_and_solve_multiple(self.repetitions.get(), self.save_data.get()))
         create_and_solve_button.pack(pady=5)
 
+        load_maze_data_button = Button(self.frame, text = "Load Maze Data", command = lambda: self.controller.load_maze_data_from_file(self.maze_file_name.get()))
+        load_maze_data_button.pack(pady=5)
+
     def show_graph(self):
         plt.show()
 

@@ -75,3 +75,24 @@ class Controller:
 
     def get_gen_algorithms(self):
         return self.model.get_gen_algorithms()
+
+    def load_maze_data_from_file(self, filename):
+        try:
+            mazes = self.model.load_maze_data(filename)
+            maze_sizes = []
+            avg_solution_times = []
+            avg_generation_times = []
+            for maze in mazes:
+                maze_sizes.append(maze.height)
+                avg_solution_times.append(self.model.calc_average(maze.solution_times))
+                avg_generation_times.append(self.model.calc_average(maze.generation_times))
+            title = "Relationship between the maze size and average solution time"
+            self.view.setup_plot(1, title, "", "Maze Size", "Time (ms)")
+            self.view.plot_graph(maze_sizes, avg_solution_times)
+            
+            title2 = "Relationship between the maze size and average generation time"
+            self.view.setup_plot(2, title2, "", "Maze Size", "Time (ms)")
+            self.view.plot_graph(maze_sizes, avg_generation_times)
+            self.view.show_graph()
+        except exc.InvalidInputException as e:
+            self.view.show_messagebox("Error", e)
